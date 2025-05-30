@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const serverConfig = require("../config/serverConfig");
 const userSchema = new mongoose.Schema({
   fullName: {
     firstName: {
@@ -11,8 +12,6 @@ const userSchema = new mongoose.Schema({
     },
     lastName: {
       type: String,
-      minLength: [3, "Last name must be at least 3 characters long"],
-      maxLength: [50, "Last name must not exceed 50 characters"],
     },
   },
   email: {
@@ -35,7 +34,7 @@ const userSchema = new mongoose.Schema({
 });
 
 userSchema.methods.generateAccessToken = function () {
-  const token = jwt.sign({ _id: this._id }, process.env.JWT_SECRET, {
+  const token = jwt.sign({ _id: this._id }, serverConfig.JWT_SECRET, {
     expiresIn: "1h",
   });
   return token;
@@ -50,9 +49,11 @@ userSchema.methods.comparePassword = async function (candidatePassword) {
   }
 };
 
-userSchema.methods.hashPassword = async function () {
-  return bcrypt.hash(this.password, 10);
+// create this as a static method
+userSchema.statics.hashPassword = async function (password) {
+  return bcrypt.hash(password, 10);
 };
+
 userSchema.pre("save", async function (next) {
   if (this.isModified("password")) {
     try {
