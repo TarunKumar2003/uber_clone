@@ -42,10 +42,10 @@ userSchema.methods.generateAccessToken = function () {
 
 userSchema.methods.comparePassword = async function (candidatePassword) {
   try {
-    const isMatch = await bcrypt.compare(candidatePassword, this.password);
-    return isMatch;
+    return await bcrypt.compare(candidatePassword, this.password);
   } catch (error) {
-    throw new Error("Error comparing passwords");
+    console.error("Error during password comparison:", error);
+    throw new Error("Internal error during authentication");
   }
 };
 
