@@ -1,6 +1,7 @@
 const express = require("express");
-const { body, validationResult } = require("express-validator");
+const { body } = require("express-validator");
 const { userController } = require("../controllers");
+const authMiddleware = require("../middlewares/auth.middleware");
 const userRouter = express.Router();
 
 userRouter.post(
@@ -26,4 +27,7 @@ userRouter.post(
   ],
   userController.loginInUser
 );
+// This route is only hit by User if they are logged in
+// For checking if user is logged in, we can use a middleware
+userRouter.get("/profile", authMiddleware, userController.getUserProfile);
 module.exports = userRouter;

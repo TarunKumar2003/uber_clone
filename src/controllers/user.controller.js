@@ -2,7 +2,7 @@ const { validationResult } = require("express-validator");
 const User = require("../models/userModel");
 const { createUser } = require("../services/user.service");
 
-async function registerUser(req, res, next) {
+async function registerUser(req, res) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -24,7 +24,7 @@ async function registerUser(req, res, next) {
 }
 
 // User Login Controller
-async function loginInUser(req, res, next) {
+async function loginInUser(req, res) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -43,10 +43,26 @@ async function loginInUser(req, res, next) {
   // user.select("-password"); // Exclude password from the response
   user.password = undefined; // Hide password from response
   const token = user.generateAccessToken();
+
+  // Set the token in a cookie (optional, if you want to use cookies)
+  res.cookie("token", token);
   res.status(200).json({ token, user });
 }
 
+async function getUserProfile(req, res) {
+  return res.status(200).json({
+    user: req.user,
+  });
+}
+
+async function logoutUser(req, res) {
+  // Clear the token cookie
+  res.clearCookie("token");
+  res.status(200).json({ message: "Logged out successfully" });
+}
 module.exports = {
   registerUser,
   loginInUser,
+  getUserProfile,
+  logoutUser,
 };
