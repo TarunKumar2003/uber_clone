@@ -24,7 +24,7 @@ async function createCaptain({
 
   // Here you would typically hash the password and save the captain to the database
   const hashedPassword = await Captain.hashPassword(password);
-  const captain = new Captain({
+  const captain = Captain.create({
     fullName: {
       firstName,
       lastName,
@@ -38,7 +38,6 @@ async function createCaptain({
       vehicleType,
     },
   });
-  await captain.save();
   return captain;
 }
 

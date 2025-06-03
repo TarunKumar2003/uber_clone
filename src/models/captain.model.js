@@ -88,6 +88,16 @@ capitainSchema.statics.hashPassword = async function (password) {
 capitainSchema.methods.comparePassword = async function (password) {
   return await bcrypt.compare(password, this.password);
 };
-
+capitainSchema.pre("save", async function (next) {
+  if (this.isModified("password")) {
+    try {
+      const salt = await bcrypt.genSalt(10);
+      this.password = await bcrypt.hash(this.password, salt);
+    } catch (error) {
+      return next(error);
+    }
+  }
+  next();
+});
 const Captain = mongoose.model("Captain", capitainSchema);
 module.exports = Captain;
