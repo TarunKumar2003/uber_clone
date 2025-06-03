@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
-const bcrypt = require("bcryptjs");
+const bcrypt = require("bcrypt");
 const capitainSchema = new mongoose.Schema({
   fullName: {
     firstName: {
@@ -13,8 +13,6 @@ const capitainSchema = new mongoose.Schema({
     lastName: {
       type: String,
       trim: true,
-      minLength: [3, "Last name must be at least 3 characters long"],
-      maxLength: [50, "Last name must be at most 50 characters long"],
     },
   },
   email: {
